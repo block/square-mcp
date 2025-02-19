@@ -28,7 +28,7 @@ mcp = FastMCP(
 )
 
 # Payment and Refund Tools
-@mcp.tool("List payments")
+@mcp.tool("list_payments")
 async def list_payments(
     begin_time: Optional[str] = None,
     end_time: Optional[str] = None,
@@ -55,7 +55,7 @@ async def list_payments(
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-@mcp.tool("Create a payment")
+@mcp.tool("create_payment")
 async def create_payment(
     source_id: str,
     amount: int,
@@ -88,7 +88,7 @@ async def create_payment(
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-@mcp.tool("Refund a payment")
+@mcp.tool("refund_payment")
 async def refund_payment(
     payment_id: str,
     amount: int,
@@ -122,7 +122,7 @@ async def refund_payment(
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Order Tools
-@mcp.tool("Create an order")
+@mcp.tool("create_order")
 async def create_order(
     location_id: str,
     line_items: List[Dict[str, Any]],
@@ -150,7 +150,7 @@ async def create_order(
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Catalog Tools
-@mcp.tool("Create catalog item")
+@mcp.tool("create_catalog_item")
 async def create_catalog_item(
     name: str,
     description: Optional[str] = None,
@@ -192,7 +192,7 @@ async def create_catalog_item(
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Customer Tools
-@mcp.tool("Create customer")
+@mcp.tool("create_customer")
 async def create_customer(
     given_name: Optional[str] = None,
     family_name: Optional[str] = None,
@@ -224,7 +224,7 @@ async def create_customer(
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Inventory Tools
-@mcp.tool("Adjust inventory")
+@mcp.tool("adjust_inventory")
 async def adjust_inventory(
     catalog_object_id: str,
     location_id: str,
@@ -260,7 +260,7 @@ async def adjust_inventory(
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Location Tools
-@mcp.tool("List locations")
+@mcp.tool("list_locations")
 async def list_locations() -> Dict[str, Any]:
     """
     List all locations for the business using Square API.
@@ -272,7 +272,7 @@ async def list_locations() -> Dict[str, Any]:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Team Management Tools
-@mcp.tool("Create team member")
+@mcp.tool("create_team_member")
 async def create_team_member(
     given_name: str,
     family_name: str,
@@ -306,7 +306,7 @@ async def create_team_member(
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Payout Tools
-@mcp.tool("List payouts")
+@mcp.tool("list_payouts")
 async def list_payouts(
     location_id: Optional[str] = None,
     begin_time: Optional[str] = None,
@@ -336,7 +336,7 @@ async def list_payouts(
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-@mcp.tool("Get payout")
+@mcp.tool("get_payout")
 async def get_payout(
     payout_id: str
 ) -> Dict[str, Any]:
@@ -352,7 +352,7 @@ async def get_payout(
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-@mcp.tool("List payout entries")
+@mcp.tool("list_payout_entries")
 async def list_payout_entries(
     payout_id: str,
     sort_order: Optional[str] = None,
