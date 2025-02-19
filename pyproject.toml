@@ -1,9 +1,9 @@
 [project]
 name = "square-mcp"
-version = "0.1.4"
+version = "0.2.0"
 description = "Square API Model Context Protocol Server"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 license = "MIT"
 authors = [
     { name = "Max Novich", email = "mnovich@block.xyz" }
@@ -13,7 +13,8 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
 ]
 dependencies = [
     "mcp[cli]>=1.2.0",

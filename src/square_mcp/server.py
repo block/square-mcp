@@ -27,386 +27,466 @@ mcp = FastMCP(
     version="0.1.0",
 )
 
-# Payment and Refund Tools
-@mcp.tool("list-payments", 
-    description="List payments using Square API",
-    display_type="tool",
-    display_height_px=500,
-    display_width_px=800)
-async def list_payments(
-    begin_time: Optional[str] = None,
-    end_time: Optional[str] = None,
-    location_id: Optional[str] = None,
-    cursor: Optional[str] = None
+@mcp.tool()
+async def payments(
+    operation: str,
+    params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """List payments using Square API.
-    
+    """Manage payment operations using Square API
+
     Args:
-        begin_time: Optional RFC 3339 timestamp for the beginning of the reporting period
-        end_time: Optional RFC 3339 timestamp for the end of the reporting period
-        location_id: Optional ID of the location to list payments for
-        cursor: Optional pagination cursor
+        operation: The operation to perform. Valid operations:
+            Payments:
+                - list_payments
+                - create_payment
+                - get_payment
+                - update_payment
+                - cancel_payment
+            Refunds:
+                - refund_payment
+                - list_refunds
+                - get_refund
+            Disputes:
+                - list_disputes
+                - retrieve_dispute
+                - accept_dispute
+                - create_dispute_evidence
+            Gift Cards:
+                - create_gift_card
+                - link_customer_to_gift_card
+                - retrieve_gift_card
+                - list_gift_cards
+            Bank Accounts:
+                - list_bank_accounts
+                - get_bank_account
+        params: Dictionary of parameters for the specific operation
     """
     try:
-        result = square_client.payments.list_payments(
-            begin_time=begin_time,
-            end_time=end_time,
-            location_id=location_id,
-            cursor=cursor
-        )
+        if operation == "list_payments":
+            result = square_client.payments.list_payments(**params)
+        elif operation == "create_payment":
+            result = square_client.payments.create_payment(params)
+        elif operation == "refund_payment":
+            result = square_client.refunds.refund_payment(params)
+        elif operation == "list_disputes":
+            result = square_client.disputes.list_disputes(**params)
+        elif operation == "create_gift_card":
+            result = square_client.gift_cards.create_gift_card(params)
+        elif operation == "list_bank_accounts":
+            result = square_client.bank_accounts.list_bank_accounts(**params)
+        else:
+            raise McpError(INVALID_PARAMS, ErrorData(message=f"Invalid operation: {operation}"))
+
         return result.body
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-@mcp.tool("create-payment",
-    description="Create a payment using Square API",
-    display_type="tool",
-    display_height_px=500,
-    display_width_px=800)
-async def create_payment(
-    source_id: str,
-    amount: int,
-    currency: str,
-    location_id: str,
-    idempotency_key: Optional[str] = None
+@mcp.tool()
+async def terminal(
+    operation: str,
+    params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """Create a payment using Square API
-    
+    """Manage Square Terminal operations
+
     Args:
-        source_id: The ID of the payment source (card nonce, etc.)
-        amount: The payment amount in cents
-        currency: The currency code (e.g., 'USD')
-        location_id: The ID of the business location
-        idempotency_key: Optional unique key to prevent duplicate payments
+        operation: The operation to perform. Valid operations:
+            Checkout:
+                - create_terminal_checkout
+                - search_terminal_checkouts
+                - get_terminal_checkout
+                - cancel_terminal_checkout
+            Devices:
+                - create_terminal_device
+                - get_terminal_device
+                - search_terminal_devices
+            Refunds:
+                - create_terminal_refund
+                - search_terminal_refunds
+                - get_terminal_refund
+                - cancel_terminal_refund
+        params: Dictionary of parameters for the specific operation
     """
     try:
-        body = {
-            "source_id": source_id,
-            "amount_money": {
-                "amount": amount,
-                "currency": currency
-            },
-            "location_id": location_id,
-            "idempotency_key": idempotency_key or str(datetime.now().timestamp())
-        }
-        result = square_client.payments.create_payment(body)
+        if operation == "create_terminal_checkout":
+            result = square_client.terminal.create_terminal_checkout(params)
+        elif operation == "create_terminal_device":
+            result = square_client.terminal.create_terminal_device(params)
+        elif operation == "create_terminal_refund":
+            result = square_client.terminal.create_terminal_refund(params)
+        else:
+            raise McpError(INVALID_PARAMS, ErrorData(message=f"Invalid operation: {operation}"))
+
         return result.body
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-@mcp.tool("refund-payment",
-    description="Refund a payment using Square API",
-    display_type="tool",
-    display_height_px=500,
-    display_width_px=800)
-async def refund_payment(
-    payment_id: str,
-    amount: int,
-    currency: str,
-    reason: Optional[str] = None,
-    idempotency_key: Optional[str] = None
+@mcp.tool()
+async def orders(
+    operation: str,
+    params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """Refund a payment using Square API
-    
+    """Manage orders and checkout operations
+
     Args:
-        payment_id: The ID of the payment to refund
-        amount: The refund amount in cents
-        currency: The currency code (e.g., 'USD')
-        reason: Optional reason for the refund
-        idempotency_key: Optional unique key to prevent duplicate refunds
+        operation: The operation to perform. Valid operations:
+            Orders:
+                - create_order
+                - batch_retrieve_orders
+                - calculate_order
+                - clone_order
+                - search_orders
+                - pay_order
+                - update_order
+            Checkout:
+                - create_checkout
+                - create_payment_link
+            Custom Attributes:
+                - upsert_order_custom_attribute
+                - list_order_custom_attribute_definitions
+        params: Dictionary of parameters for the specific operation
     """
     try:
-        body = {
-            "payment_id": payment_id,
-            "amount_money": {
-                "amount": amount,
-                "currency": currency
-            },
-            "reason": reason,
-            "idempotency_key": idempotency_key or str(datetime.now().timestamp())
-        }
-        result = square_client.refunds.refund_payment(body)
+        if operation == "create_order":
+            result = square_client.orders.create_order(params)
+        elif operation == "search_orders":
+            result = square_client.orders.search_orders(params)
+        elif operation == "create_checkout":
+            result = square_client.checkout.create_checkout(params)
+        else:
+            raise McpError(INVALID_PARAMS, ErrorData(message=f"Invalid operation: {operation}"))
+
         return result.body
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-# Order Tools
-@mcp.tool("create-order",
-    description="Create an order using Square API",
-    display_type="tool",
-    display_height_px=500,
-    display_width_px=800)
-async def create_order(
-    location_id: str,
-    line_items: List[Dict[str, Any]],
-    idempotency_key: Optional[str] = None
+@mcp.tool()
+async def catalog(
+    operation: str,
+    params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """Create an order using Square API
-    
+    """Manage catalog operations
+
     Args:
-        location_id: The ID of the business location
-        line_items: List of items in the order
-        idempotency_key: Optional unique key to prevent duplicate orders
+        operation: The operation to perform. Valid operations:
+            - create_catalog_object
+            - batch_delete_catalog_objects
+            - batch_retrieve_catalog_objects
+            - batch_upsert_catalog_objects
+            - create_catalog_image
+            - delete_catalog_object
+            - retrieve_catalog_object
+            - search_catalog_objects
+            - update_catalog_object
+            - update_item_modifier_lists
+            - update_item_taxes
+        params: Dictionary of parameters for the specific operation
     """
     try:
-        body = {
-            "order": {
-                "location_id": location_id,
-                "line_items": line_items
-            },
-            "idempotency_key": idempotency_key or str(datetime.now().timestamp())
-        }
-        result = square_client.orders.create_order(body)
+        if operation == "create_catalog_object":
+            result = square_client.catalog.create_catalog_object(params)
+        elif operation == "search_catalog_objects":
+            result = square_client.catalog.search_catalog_objects(params)
+        elif operation == "batch_upsert_catalog_objects":
+            result = square_client.catalog.batch_upsert_catalog_objects(params)
+        else:
+            raise McpError(INVALID_PARAMS, ErrorData(message=f"Invalid operation: {operation}"))
+
         return result.body
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-# Catalog Tools
-@mcp.tool("create-catalog-item",
-    description="Create a catalog item using Square API",
-    display_type="tool",
-    display_height_px=500,
-    display_width_px=800)
-async def create_catalog_item(
-    name: str,
-    description: Optional[str] = None,
-    price_money: Optional[Dict[str, Any]] = None,
-    idempotency_key: Optional[str] = None
+@mcp.tool()
+async def inventory(
+    operation: str,
+    params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """Create a catalog item using Square API
-    
+    """Manage inventory operations
+
     Args:
-        name: The name of the item
-        description: Optional description of the item
-        price_money: Optional price information
-        idempotency_key: Optional unique key to prevent duplicates
+        operation: The operation to perform. Valid operations:
+            - batch_change_inventory
+            - batch_retrieve_inventory_changes
+            - batch_retrieve_inventory_counts
+            - retrieve_inventory_adjustment
+            - retrieve_inventory_changes
+            - retrieve_inventory_count
+            - retrieve_inventory_physical_count
+            - retrieve_inventory_transfer
+        params: Dictionary of parameters for the specific operation
     """
     try:
-        body = {
-            "idempotency_key": idempotency_key or str(datetime.now().timestamp()),
-            "object": {
-                "type": "ITEM",
-                "item_data": {
-                    "name": name,
-                    "description": description,
-                    "variations": [
-                        {
-                            "type": "ITEM_VARIATION",
-                            "item_variation_data": {
-                                "name": "Regular",
-                                "price_money": price_money
-                            }
-                        }
-                    ]
-                }
-            }
-        }
-        result = square_client.catalog.create_catalog_object(body)
+        if operation == "batch_change_inventory":
+            result = square_client.inventory.batch_change_inventory(params)
+        elif operation == "retrieve_inventory_count":
+            result = square_client.inventory.retrieve_inventory_count(**params)
+        else:
+            raise McpError(INVALID_PARAMS, ErrorData(message=f"Invalid operation: {operation}"))
+
         return result.body
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-# Customer Tools
-@mcp.tool("create-customer",
-    description="Create a customer using Square API",
-    display_type="tool",
-    display_height_px=500,
-    display_width_px=800)
-async def create_customer(
-    given_name: Optional[str] = None,
-    family_name: Optional[str] = None,
-    email_address: Optional[str] = None,
-    phone_number: Optional[str] = None,
-    idempotency_key: Optional[str] = None
+@mcp.tool()
+async def subscriptions(
+    operation: str,
+    params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """Create a customer using Square API
-    
+    """Manage subscription operations
+
     Args:
-        given_name: Optional first name of the customer
-        family_name: Optional last name of the customer
-        email_address: Optional email address
-        phone_number: Optional phone number
-        idempotency_key: Optional unique key to prevent duplicates
+        operation: The operation to perform. Valid operations:
+            - create_subscription
+            - search_subscriptions
+            - retrieve_subscription
+            - update_subscription
+            - cancel_subscription
+            - list_subscription_events
+            - pause_subscription
+            - resume_subscription
+            - swap_plan
+        params: Dictionary of parameters for the specific operation
     """
     try:
-        body = {
-            "idempotency_key": idempotency_key or str(datetime.now().timestamp()),
-            "given_name": given_name,
-            "family_name": family_name,
-            "email_address": email_address,
-            "phone_number": phone_number
-        }
-        result = square_client.customers.create_customer(body)
+        if operation == "create_subscription":
+            result = square_client.subscriptions.create_subscription(params)
+        elif operation == "search_subscriptions":
+            result = square_client.subscriptions.search_subscriptions(params)
+        else:
+            raise McpError(INVALID_PARAMS, ErrorData(message=f"Invalid operation: {operation}"))
+
         return result.body
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-# Inventory Tools
-@mcp.tool("adjust-inventory",
-    description="Adjust inventory counts using Square API",
-    display_type="tool",
-    display_height_px=500,
-    display_width_px=800)
-async def adjust_inventory(
-    catalog_object_id: str,
-    location_id: str,
-    quantity: int,
-    idempotency_key: Optional[str] = None
+@mcp.tool()
+async def invoices(
+    operation: str,
+    params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """Adjust inventory counts using Square API
-    
+    """Manage invoice operations
+
     Args:
-        catalog_object_id: The ID of the catalog item
-        location_id: The ID of the business location
-        quantity: The quantity to adjust (positive or negative)
-        idempotency_key: Optional unique key to prevent duplicates
+        operation: The operation to perform. Valid operations:
+            - create_invoice
+            - search_invoices
+            - get_invoice
+            - update_invoice
+            - cancel_invoice
+            - publish_invoice
+            - delete_invoice
+        params: Dictionary of parameters for the specific operation
     """
     try:
-        body = {
-            "idempotency_key": idempotency_key or str(datetime.now().timestamp()),
-            "changes": [
-                {
-                    "type": "ADJUSTMENT",
-                    "adjustment": {
-                        "catalog_object_id": catalog_object_id,
-                        "location_id": location_id,
-                        "quantity": str(quantity)
-                    }
-                }
-            ]
-        }
-        result = square_client.inventory.batch_change_inventory(body)
+        if operation == "create_invoice":
+            result = square_client.invoices.create_invoice(params)
+        elif operation == "search_invoices":
+            result = square_client.invoices.search_invoices(params)
+        else:
+            raise McpError(INVALID_PARAMS, ErrorData(message=f"Invalid operation: {operation}"))
+
         return result.body
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-# Location Tools
-@mcp.tool("list-locations",
-    description="List all locations for the business using Square API",
-    display_type="tool",
-    display_height_px=500,
-    display_width_px=800)
-async def list_locations() -> Dict[str, Any]:
-    """List all locations for the business using Square API"""
+@mcp.tool()
+async def team(
+    operation: str,
+    params: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Manage team operations
+
+    Args:
+        operation: The operation to perform. Valid operations:
+            Team Members:
+                - create_team_member
+                - bulk_create_team_members
+                - update_team_member
+                - retrieve_team_member
+                - search_team_members
+            Wages:
+                - retrieve_wage_setting
+                - update_wage_setting
+            Labor:
+                - create_break_type
+                - create_shift
+                - search_shifts
+                - update_shift
+                - create_workweek_config
+            Cash Drawers:
+                - list_cash_drawer_shifts
+                - retrieve_cash_drawer_shift
+        params: Dictionary of parameters for the specific operation
+    """
     try:
-        result = square_client.locations.list_locations()
+        if operation == "create_team_member":
+            result = square_client.team.create_team_member(params)
+        elif operation == "search_team_members":
+            result = square_client.team.search_team_members(params)
+        elif operation == "create_shift":
+            result = square_client.labor.create_shift(params)
+        else:
+            raise McpError(INVALID_PARAMS, ErrorData(message=f"Invalid operation: {operation}"))
+
         return result.body
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-# Team Management Tools
-@mcp.tool("create-team-member",
-    description="Create a team member using Square API",
-    display_type="tool",
-    display_height_px=500,
-    display_width_px=800)
-async def create_team_member(
-    given_name: str,
-    family_name: str,
-    email_address: Optional[str] = None,
-    phone_number: Optional[str] = None,
-    idempotency_key: Optional[str] = None
+@mcp.tool()
+async def customers(
+    operation: str,
+    params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """Create a team member using Square API
-    
+    """Manage customer operations
+
     Args:
-        given_name: First name of the team member
-        family_name: Last name of the team member
-        email_address: Optional email address
-        phone_number: Optional phone number
-        idempotency_key: Optional unique key to prevent duplicates
+        operation: The operation to perform. Valid operations:
+            Customers:
+                - list_customers
+                - create_customer
+                - delete_customer
+                - retrieve_customer
+                - update_customer
+                - search_customers
+            Groups:
+                - create_customer_group
+                - delete_customer_group
+                - list_customer_groups
+                - retrieve_customer_group
+                - update_customer_group
+            Segments:
+                - list_customer_segments
+                - retrieve_customer_segment
+            Custom Attributes:
+                - create_customer_custom_attribute_definition
+                - delete_customer_custom_attribute_definition
+                - list_customer_custom_attribute_definitions
+        params: Dictionary of parameters for the specific operation
     """
     try:
-        body = {
-            "idempotency_key": idempotency_key or str(datetime.now().timestamp()),
-            "team_member": {
-                "given_name": given_name,
-                "family_name": family_name,
-                "email_address": email_address,
-                "phone_number": phone_number
-            }
-        }
-        result = square_client.team.create_team_member(body)
+        if operation == "create_customer":
+            result = square_client.customers.create_customer(params)
+        elif operation == "search_customers":
+            result = square_client.customers.search_customers(params)
+        elif operation == "create_customer_group":
+            result = square_client.customer_groups.create_customer_group(params)
+        else:
+            raise McpError(INVALID_PARAMS, ErrorData(message=f"Invalid operation: {operation}"))
+
         return result.body
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-# Payout Tools
-@mcp.tool("list-payouts",
-    description="List payouts using Square API",
-    display_type="tool",
-    display_height_px=500,
-    display_width_px=800)
-async def list_payouts(
-    location_id: Optional[str] = None,
-    begin_time: Optional[str] = None,
-    end_time: Optional[str] = None,
-    sort_order: Optional[str] = None,
-    cursor: Optional[str] = None
+@mcp.tool()
+async def loyalty(
+    operation: str,
+    params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """List payouts using Square API
-    
+    """Manage loyalty operations
+
     Args:
-        location_id: Optional ID of the location to list payouts for
-        begin_time: Optional RFC 3339 timestamp for the beginning of the reporting period
-        end_time: Optional RFC 3339 timestamp for the end of the reporting period
-        sort_order: Optional sort order (ASC or DESC)
-        cursor: Optional pagination cursor
+        operation: The operation to perform. Valid operations:
+            Programs:
+                - create_loyalty_program
+                - retrieve_loyalty_program
+            Accounts:
+                - create_loyalty_account
+                - search_loyalty_accounts
+                - retrieve_loyalty_account
+                - accumulate_loyalty_points
+                - adjust_loyalty_points
+                - search_loyalty_events
+            Promotions:
+                - create_loyalty_promotion
+                - cancel_loyalty_promotion
+        params: Dictionary of parameters for the specific operation
     """
     try:
-        result = square_client.payouts.list_payouts(
-            location_id=location_id,
-            begin_time=begin_time,
-            end_time=end_time,
-            sort_order=sort_order,
-            cursor=cursor
-        )
+        if operation == "create_loyalty_program":
+            result = square_client.loyalty.create_loyalty_program(params)
+        elif operation == "create_loyalty_account":
+            result = square_client.loyalty.create_loyalty_account(params)
+        else:
+            raise McpError(INVALID_PARAMS, ErrorData(message=f"Invalid operation: {operation}"))
+
         return result.body
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-@mcp.tool("get-payout",
-    description="Get details of a specific payout using Square API",
-    display_type="tool",
-    display_height_px=500,
-    display_width_px=800)
-async def get_payout(
-    payout_id: str
+@mcp.tool()
+async def bookings(
+    operation: str,
+    params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """Get details of a specific payout using Square API
-    
+    """Manage booking operations
+
     Args:
-        payout_id: The ID of the payout to retrieve
+        operation: The operation to perform. Valid operations:
+            Bookings:
+                - create_booking
+                - search_bookings
+                - retrieve_booking
+                - update_booking
+                - cancel_booking
+            Team Member Bookings:
+                - bulk_retrieve_team_member_bookings
+                - retrieve_team_member_booking_profile
+            Location Profiles:
+                - list_location_booking_profiles
+                - retrieve_location_booking_profile
+            Custom Attributes:
+                - create_booking_custom_attribute_definition
+                - update_booking_custom_attribute_definition
+        params: Dictionary of parameters for the specific operation
     """
     try:
-        result = square_client.payouts.get_payout(payout_id=payout_id)
+        if operation == "create_booking":
+            result = square_client.bookings.create_booking(params)
+        elif operation == "search_bookings":
+            result = square_client.bookings.search_bookings(params)
+        else:
+            raise McpError(INVALID_PARAMS, ErrorData(message=f"Invalid operation: {operation}"))
+
         return result.body
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-@mcp.tool("list-payout-entries",
-    description="List all entries for a specific payout using Square API",
-    display_type="tool",
-    display_height_px=500,
-    display_width_px=800)
-async def list_payout_entries(
-    payout_id: str,
-    sort_order: Optional[str] = None,
-    cursor: Optional[str] = None
+@mcp.tool()
+async def business(
+    operation: str,
+    params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """List all entries for a specific payout using Square API
-    
+    """Manage business operations
+
     Args:
-        payout_id: The ID of the payout to list entries for
-        sort_order: Optional sort order (ASC or DESC)
-        cursor: Optional pagination cursor
+        operation: The operation to perform. Valid operations:
+            Merchants:
+                - list_merchants
+                - retrieve_merchant
+            Locations:
+                - list_locations
+                - create_location
+                - retrieve_location
+                - update_location
+            Vendors:
+                - bulk_create_vendors
+                - bulk_retrieve_vendors
+                - create_vendor
+                - search_vendors
+                - update_vendor
+            Sites:
+                - list_sites
+        params: Dictionary of parameters for the specific operation
     """
     try:
-        result = square_client.payouts.list_payout_entries(
-            payout_id=payout_id,
-            sort_order=sort_order,
-            cursor=cursor
-        )
+        if operation == "list_locations":
+            result = square_client.locations.list_locations()
+        elif operation == "create_location":
+            result = square_client.locations.create_location(params)
+        elif operation == "create_vendor":
+            result = square_client.vendors.create_vendor(params)
+        else:
+            raise McpError(INVALID_PARAMS, ErrorData(message=f"Invalid operation: {operation}"))
+
         return result.body
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
