@@ -4,10 +4,28 @@ version = "0.1.0"
 description = "Square API Model Context Protocol Server"
 readme = "README.md"
 requires-python = ">=3.13"
+license = "MIT"
+authors = [
+    { name = "Mihovil Novich", email = "mihovil@novich.co" }
+]
+keywords = ["square", "mcp", "api", "payments"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+]
 dependencies = [
     "mcp[cli]>=1.2.0",
     "squareup>=33.1.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Kvadratni/square-mcp"
+Repository = "https://github.com/Kvadratni/square-mcp"
+Documentation = "https://github.com/Kvadratni/square-mcp#readme"
+"Bug Tracker" = "https://github.com/Kvadratni/square-mcp/issues"
 
 [project.scripts]
 square-mcp = "square_mcp:main"
