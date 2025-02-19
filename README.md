@@ -1,9 +1,21 @@
 # Square MCP Server
 
+[![smithery badge](https://smithery.ai/badge/@Kvadratni/square-mcp)](https://smithery.ai/server/@Kvadratni/square-mcp)
+
 A Model Context Protocol (MCP) server that provides access to Square API functionality.
+
 
 ## Setup
 
+### Installing via Smithery
+
+To install Square MCP Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@Kvadratni/square-mcp):
+
+```bash
+npx -y @smithery/cli install @Kvadratni/square-mcp --client claude
+```
+
+### Manual Installation
 1. Install dependencies:
 ```bash
 uv sync
