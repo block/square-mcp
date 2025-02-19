@@ -8,8 +8,15 @@ from mcp.shared.exceptions import McpError
 from mcp.types import ErrorData, INTERNAL_ERROR, INVALID_PARAMS
 
 # Initialize Square client
+access_token = os.getenv('SQUARE_ACCESS_TOKEN')
+if not access_token:
+    raise McpError(
+        INVALID_PARAMS,
+        ErrorData(message="SQUARE_ACCESS_TOKEN environment variable is required")
+    )
+
 square_client = Client(
-    access_token=os.getenv('SQUARE_ACCESS_TOKEN'),
+    access_token=access_token,
     environment='sandbox'  # Change to 'production' for production environment
 )
 
