@@ -1,0 +1,17 @@
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
+
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    required:
+      - squareAccessToken
+    properties:
+      squareAccessToken:
+        type: string
+        description: The access token for the Square API.
+  commandFunction:
+    # A function that produces the CLI command to start the MCP on stdio.
+    |-
+    (config) => ({ command: 'square-mcp', env: { SQUARE_ACCESS_TOKEN: config.squareAccessToken } })
