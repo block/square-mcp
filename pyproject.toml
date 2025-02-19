@@ -6,11 +6,10 @@ readme = "README.md"
 requires-python = ">=3.13"
 license = "MIT"
 authors = [
-    { name = "Mihovil Novich", email = "mihovil@novich.co" }
+    { name = "Max Novich", email = "mnovich@block.xyz" }
 ]
 keywords = ["square", "mcp", "api", "payments"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
