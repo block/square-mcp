@@ -28,15 +28,18 @@ mcp = FastMCP(
 )
 
 # Payment and Refund Tools
-@mcp.tool("list_payments")
+@mcp.tool("list-payments", 
+    description="List payments using Square API",
+    display_type="tool",
+    display_height_px=500,
+    display_width_px=800)
 async def list_payments(
     begin_time: Optional[str] = None,
     end_time: Optional[str] = None,
     location_id: Optional[str] = None,
     cursor: Optional[str] = None
 ) -> Dict[str, Any]:
-    """
-    List payments using Square API.
+    """List payments using Square API.
     
     Args:
         begin_time: Optional RFC 3339 timestamp for the beginning of the reporting period
@@ -55,7 +58,11 @@ async def list_payments(
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-@mcp.tool("create_payment")
+@mcp.tool("create-payment",
+    description="Create a payment using Square API",
+    display_type="tool",
+    display_height_px=500,
+    display_width_px=800)
 async def create_payment(
     source_id: str,
     amount: int,
@@ -63,8 +70,7 @@ async def create_payment(
     location_id: str,
     idempotency_key: Optional[str] = None
 ) -> Dict[str, Any]:
-    """
-    Create a payment using Square API.
+    """Create a payment using Square API
     
     Args:
         source_id: The ID of the payment source (card nonce, etc.)
@@ -88,7 +94,11 @@ async def create_payment(
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-@mcp.tool("refund_payment")
+@mcp.tool("refund-payment",
+    description="Refund a payment using Square API",
+    display_type="tool",
+    display_height_px=500,
+    display_width_px=800)
 async def refund_payment(
     payment_id: str,
     amount: int,
@@ -96,8 +106,7 @@ async def refund_payment(
     reason: Optional[str] = None,
     idempotency_key: Optional[str] = None
 ) -> Dict[str, Any]:
-    """
-    Refund a payment using Square API.
+    """Refund a payment using Square API
     
     Args:
         payment_id: The ID of the payment to refund
@@ -122,14 +131,17 @@ async def refund_payment(
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Order Tools
-@mcp.tool("create_order")
+@mcp.tool("create-order",
+    description="Create an order using Square API",
+    display_type="tool",
+    display_height_px=500,
+    display_width_px=800)
 async def create_order(
     location_id: str,
     line_items: List[Dict[str, Any]],
     idempotency_key: Optional[str] = None
 ) -> Dict[str, Any]:
-    """
-    Create an order using Square API.
+    """Create an order using Square API
     
     Args:
         location_id: The ID of the business location
@@ -150,15 +162,18 @@ async def create_order(
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Catalog Tools
-@mcp.tool("create_catalog_item")
+@mcp.tool("create-catalog-item",
+    description="Create a catalog item using Square API",
+    display_type="tool",
+    display_height_px=500,
+    display_width_px=800)
 async def create_catalog_item(
     name: str,
     description: Optional[str] = None,
     price_money: Optional[Dict[str, Any]] = None,
     idempotency_key: Optional[str] = None
 ) -> Dict[str, Any]:
-    """
-    Create a catalog item using Square API.
+    """Create a catalog item using Square API
     
     Args:
         name: The name of the item
@@ -192,7 +207,11 @@ async def create_catalog_item(
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Customer Tools
-@mcp.tool("create_customer")
+@mcp.tool("create-customer",
+    description="Create a customer using Square API",
+    display_type="tool",
+    display_height_px=500,
+    display_width_px=800)
 async def create_customer(
     given_name: Optional[str] = None,
     family_name: Optional[str] = None,
@@ -200,8 +219,7 @@ async def create_customer(
     phone_number: Optional[str] = None,
     idempotency_key: Optional[str] = None
 ) -> Dict[str, Any]:
-    """
-    Create a customer using Square API.
+    """Create a customer using Square API
     
     Args:
         given_name: Optional first name of the customer
@@ -224,15 +242,18 @@ async def create_customer(
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Inventory Tools
-@mcp.tool("adjust_inventory")
+@mcp.tool("adjust-inventory",
+    description="Adjust inventory counts using Square API",
+    display_type="tool",
+    display_height_px=500,
+    display_width_px=800)
 async def adjust_inventory(
     catalog_object_id: str,
     location_id: str,
     quantity: int,
     idempotency_key: Optional[str] = None
 ) -> Dict[str, Any]:
-    """
-    Adjust inventory counts using Square API.
+    """Adjust inventory counts using Square API
     
     Args:
         catalog_object_id: The ID of the catalog item
@@ -260,11 +281,13 @@ async def adjust_inventory(
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Location Tools
-@mcp.tool("list_locations")
+@mcp.tool("list-locations",
+    description="List all locations for the business using Square API",
+    display_type="tool",
+    display_height_px=500,
+    display_width_px=800)
 async def list_locations() -> Dict[str, Any]:
-    """
-    List all locations for the business using Square API.
-    """
+    """List all locations for the business using Square API"""
     try:
         result = square_client.locations.list_locations()
         return result.body
@@ -272,7 +295,11 @@ async def list_locations() -> Dict[str, Any]:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Team Management Tools
-@mcp.tool("create_team_member")
+@mcp.tool("create-team-member",
+    description="Create a team member using Square API",
+    display_type="tool",
+    display_height_px=500,
+    display_width_px=800)
 async def create_team_member(
     given_name: str,
     family_name: str,
@@ -280,8 +307,7 @@ async def create_team_member(
     phone_number: Optional[str] = None,
     idempotency_key: Optional[str] = None
 ) -> Dict[str, Any]:
-    """
-    Create a team member using Square API.
+    """Create a team member using Square API
     
     Args:
         given_name: First name of the team member
@@ -306,7 +332,11 @@ async def create_team_member(
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
 # Payout Tools
-@mcp.tool("list_payouts")
+@mcp.tool("list-payouts",
+    description="List payouts using Square API",
+    display_type="tool",
+    display_height_px=500,
+    display_width_px=800)
 async def list_payouts(
     location_id: Optional[str] = None,
     begin_time: Optional[str] = None,
@@ -314,8 +344,7 @@ async def list_payouts(
     sort_order: Optional[str] = None,
     cursor: Optional[str] = None
 ) -> Dict[str, Any]:
-    """
-    List payouts using Square API.
+    """List payouts using Square API
     
     Args:
         location_id: Optional ID of the location to list payouts for
@@ -336,12 +365,15 @@ async def list_payouts(
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-@mcp.tool("get_payout")
+@mcp.tool("get-payout",
+    description="Get details of a specific payout using Square API",
+    display_type="tool",
+    display_height_px=500,
+    display_width_px=800)
 async def get_payout(
     payout_id: str
 ) -> Dict[str, Any]:
-    """
-    Get details of a specific payout using Square API.
+    """Get details of a specific payout using Square API
     
     Args:
         payout_id: The ID of the payout to retrieve
@@ -352,14 +384,17 @@ async def get_payout(
     except Exception as e:
         raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
 
-@mcp.tool("list_payout_entries")
+@mcp.tool("list-payout-entries",
+    description="List all entries for a specific payout using Square API",
+    display_type="tool",
+    display_height_px=500,
+    display_width_px=800)
 async def list_payout_entries(
     payout_id: str,
     sort_order: Optional[str] = None,
     cursor: Optional[str] = None
 ) -> Dict[str, Any]:
-    """
-    List all entries for a specific payout using Square API.
+    """List all entries for a specific payout using Square API
     
     Args:
         payout_id: The ID of the payout to list entries for
