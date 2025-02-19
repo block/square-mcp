@@ -9,15 +9,21 @@ from mcp.types import ErrorData, INTERNAL_ERROR, INVALID_PARAMS
 
 # Initialize Square client
 access_token = os.getenv('SQUARE_ACCESS_TOKEN')
+environment = os.getenv('SQUARE_ENVIRONMENT', 'sandbox')  # Default to sandbox if not set
+
 if not access_token:
     raise McpError(
-        INVALID_PARAMS,
-        ErrorData(message="SQUARE_ACCESS_TOKEN environment variable is required")
+        ErrorData(code=INVALID_PARAMS, message="SQUARE_ACCESS_TOKEN environment variable is required")
+    )
+
+if environment not in ['sandbox', 'production']:
+    raise McpError(
+        ErrorData(code=INVALID_PARAMS, message="SQUARE_ENVIRONMENT must be either 'sandbox' or 'production'")
     )
 
 square_client = Client(
     access_token=access_token,
-    environment='sandbox'  # Change to 'production' for production environment
+    environment=environment
 )
 
 mcp = FastMCP(
