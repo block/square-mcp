@@ -21,6 +21,33 @@ mcp = FastMCP(
 )
 
 # Payment and Refund Tools
+@mcp.tool("List payments")
+async def list_payments(
+    begin_time: Optional[str] = None,
+    end_time: Optional[str] = None,
+    location_id: Optional[str] = None,
+    cursor: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    List payments using Square API.
+    
+    Args:
+        begin_time: Optional RFC 3339 timestamp for the beginning of the reporting period
+        end_time: Optional RFC 3339 timestamp for the end of the reporting period
+        location_id: Optional ID of the location to list payments for
+        cursor: Optional pagination cursor
+    """
+    try:
+        result = square_client.payments.list_payments(
+            begin_time=begin_time,
+            end_time=end_time,
+            location_id=location_id,
+            cursor=cursor
+        )
+        return result.body
+    except Exception as e:
+        raise McpError(INTERNAL_ERROR, ErrorData(message=str(e)))
+
 @mcp.tool("Create a payment")
 async def create_payment(
     source_id: str,
