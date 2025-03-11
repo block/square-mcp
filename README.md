@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server that provides access to Square API functionality.
 
+<a href="https://glama.ai/mcp/servers/xumoqtcs57">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/xumoqtcs57/badge" alt="Square Server MCP server" />
+</a>
+
 ## Setup
 
 1. Install dependencies:
