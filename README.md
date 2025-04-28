@@ -1,4 +1,12 @@
-# Square MCP Server
+# 🚨 DEPRECATED: Square MCP Server (Old Version)
+
+> **⚠️ This repository is no longer maintained.**  
+> **Official development has moved to [square/square-mcp-server](https://github.com/square/square-mcp-server).**  
+> Please use the new repository for the latest, officially supported Square MCP Server.
+
+---
+
+## Archived Information (for reference)
 
 A Model Context Protocol (MCP) server that provides access to Square API functionality.
 
@@ -36,3 +44,8 @@ mcp dev src/square_mcp/server.py
 |----------|----------|---------|-------------|
 | `SQUARE_ACCESS_TOKEN` | Yes | - | Your Square API access token |
 | `SQUARE_ENVIRONMENT` | No | `sandbox` | Square API environment (`sandbox` or `production`) |
+
+---
+
+### 🔗 Migrate to the new server:
+- Repository: [square/square-mcp-server](https://github.com/square/square-mcp-server)
